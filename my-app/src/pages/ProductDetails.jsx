@@ -9,19 +9,20 @@ const ProductDetails = () => {
   const [pdetail, setPdetails] = useState(null)
   const { id } = useParams()
 
-  const fetchPost = async () => {
+useEffect(() => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5500/api/posts/${id}`)
+      const response = await axios.get(
+        `http://localhost:5500/api/posts/${id}`
+      );
       setPdetails(response.data);
     } catch (error) {
-      console.log('Error fetching post')
+      console.log("Error fetching post");
     }
-  }
+  };
 
-  useEffect(() => {
-
-    fetchPost()
-  }, [id])
+  fetchData();
+}, [id]);
 
   if (!pdetail) {
     return <h1 className="loading-msg">Loading....</h1>
