@@ -9,15 +9,13 @@ const categoryRoutes = require('./routes/category');
 const otpStore = require('./otpStore');
 const nodemailer = require('nodemailer')
 const dotenv = require("dotenv");
-
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5500;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-dotenv.config()
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
@@ -29,8 +27,8 @@ app.use('/api/categories', categoryRoutes);
 
 // Razorpay instance
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_uVn1nCMdkKJ7qH', // ✅ replace with your key_id
-  key_secret: 'DVXdBXEVC12F4TrXMUzev7Cu'       // ✅ replace with your key_secret
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
 // Create Order
@@ -56,7 +54,7 @@ app.post('/verify-payment', (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
   const body = razorpay_order_id + '|' + razorpay_payment_id;
-  const expectedSignature = crypto.createHmac('sha256', 'DVXdBXEVC12F4TrXMUzev7Cu') // ✅ same as key_secret
+  const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
     .update(body.toString())
     .digest('hex');
 
@@ -76,8 +74,8 @@ app.post('/sendOtp', async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'keerthivasan1823@gmail.com',
-      pass: 'arwhhmnjcgvxgzki', // Gmail app password
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     }
   });
 
