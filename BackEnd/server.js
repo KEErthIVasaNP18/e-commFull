@@ -9,7 +9,7 @@ const categoryRoutes = require('./routes/category');
 const otpStore = require('./otpStore');
 const nodemailer = require('nodemailer')
 const dotenv = require("dotenv");
-
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5500;
@@ -17,60 +17,53 @@ const PORT = process.env.PORT || 5500;
 app.use(cors());
 app.use(bodyParser.json());
 
-dotenv.config()
-
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
-  .catch(err => {
-    console.log('MongoDB error:', err.message);
-    
-  });
+  .catch(err => console.log('MongoDB error:', err));
 
-// Routes
 app.use('/api/posts', postRoutes);
 app.use('/api/categories', categoryRoutes);
 
-// Razorpay instance - temporarily disabled
-// const razorpay = new Razorpay({
-//   key_id: 'rzp_test_uVn1nCMdkKJ7qH', // ✅ replace with your key_id
-//   key_secret: 'DVXdBXEVC12F4TrXMUzev7Cu'       // ✅ replace with your key_secret
-// });
+// Razorpay instance
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
-// Comment out routes that use disabled dependencies
-// // Create Order
-// app.post('/create-order', async (req, res) => {
-//   const { amount } = req.body;
+// Create Order
+app.post('/create-order', async (req, res) => {
+  const { amount } = req.body;
 
-//   try {
-//     const order = await razorpay.orders.create({
-//       amount: amount * 100, // amount in paise
-//       currency: 'INR',
-//       receipt: 'receipt_' + Date.now()
-//     });
+  try {
+    const order = await razorpay.orders.create({
+      amount: amount * 100, // amount in paise
+      currency: 'INR',
+      receipt: 'receipt_' + Date.now()
+    });
 
-//     res.status(200).json(order);
-//   } catch (error) {
-//     console.error('Order creation failed:', error);
-//     res.status(500).json({ message: 'Failed to create order' });
-//   }
-// });
+    res.status(200).json(order);
+  } catch (error) {
+    console.error('Order creation failed:', error);
+    res.status(500).json({ message: 'Failed to create order' });
+  }
+});
 
-// // Verify Payment
-// app.post('/verify-payment', (req, res) => {
-//   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+// Verify Payment
+app.post('/verify-payment', (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-//   const body = razorpay_order_id + '|' + razorpay_payment_id;
-//   const expectedSignature = crypto.createHmac('sha256', 'DVXdBXEVC12F4TrXMUzev7Cu') // ✅ same as key_secret
-//     .update(body.toString())
-//     .digest('hex');
+  const body = razorpay_order_id + '|' + razorpay_payment_id;
+  const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    .update(body.toString())
+    .digest('hex');
 
-//   if (expectedSignature === razorpay_signature) {
-//     res.status(200).json({ message: 'Payment successful' });
-//   } else {
-//     res.status(400).json({ message: 'Payment verification failed' });
-//   }
-// });
+  if (expectedSignature === razorpay_signature) {
+    res.status(200).json({ message: 'Payment successful' });
+  } else {
+    res.status(400).json({ message: 'Payment verification failed' });
+  }
+});
 
 
 app.post('/sendOtp', async (req, res) => {
@@ -81,8 +74,8 @@ app.post('/sendOtp', async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: 'keerthivasan1823@gmail.com',
-      pass: 'arwhhmnjcgvxgzki', // Gmail app password
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     }
   });
 
