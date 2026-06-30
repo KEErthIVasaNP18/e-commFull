@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import './OtpLoginForm.css';
 
@@ -14,7 +14,7 @@ const OtpLoginForm = () => {
     if (!email) return setMessage("Email is required");
 
     try {
-      const res = await axios.post('http://localhost:5500/sendOtp', { email });
+      const res = await axiosInstance.post('/sendOtp', { email });
       setOtpSent(true);
       setMessage(res.data.message);
     } catch (err) {
@@ -28,7 +28,7 @@ const OtpLoginForm = () => {
     if (!otp) return setMessage("OTP is required");
 
     try {
-      const res = await axios.post('http://localhost:5500/verifyOtp', { email, otp });
+      const res = await axiosInstance.post('/verifyOtp', { email, otp });
       setMessage(res.data.message);
 
       // Save login info

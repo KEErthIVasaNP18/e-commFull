@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { Link } from "react-router-dom";
 import './allcat.css'
 
@@ -8,7 +8,7 @@ const AllCategories = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get("https://e-commerce-1-6avq.onrender.com/api/categories");
+            const response = await axiosInstance.get("/api/categories");
             setCategories(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error);

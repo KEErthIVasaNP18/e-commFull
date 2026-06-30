@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 // import Nav from '../Nav'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
+import axiosInstance from '../axiosInstance'
 import './productdetail.css'
 
 
@@ -12,9 +12,7 @@ const ProductDetails = () => {
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://e-commerce-1-6avq.onrender.com/api/posts/${id}`
-      );
+      const response = await axiosInstance.get(`/api/posts/${id}`);
       setPdetails(response.data);
     } catch (error) {
       console.log("Error fetching post");

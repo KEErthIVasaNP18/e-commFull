@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
 import Post from '../components/post';
 import Carousel from '../carousel';
 import './ProductList.css';
@@ -11,7 +11,7 @@ function ProductList({ search }) {
   // Fetch products
   const fetchPost = async () => {
     try {
-      const response = await axios.get("http://localhost:5500/api/posts");
+      const response = await axiosInstance.get("/api/posts");
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);

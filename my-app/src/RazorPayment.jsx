@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import "./razorpay.css"
@@ -31,7 +31,7 @@ const RazorpayPayment = () => {
 
   const sendOtp = async () => {
     try {
-      const res = await axios.post('https://e-commerce-1-6avq.onrender.com/sendOtp', { email });
+      const res = await axiosInstance.post('/sendOtp', { email });
       if (res.data.message === 'OTP sent successfully') {
         alert('OTP sent to your email');
         setOtpSent(true);
@@ -44,7 +44,7 @@ const RazorpayPayment = () => {
 
   const verifyOtp = async () => {
     try {
-      const res = await axios.post('https://e-commerce-1-6avq.onrender.com/verifyOtp', { email, otp: enteredOtp });
+      const res = await axiosInstance.post('/verifyOtp', { email, otp: enteredOtp });
       if (res.data.message === 'OTP verified successfully') {
         alert('OTP verified');
         setVerified(true);
@@ -61,7 +61,7 @@ const RazorpayPayment = () => {
     if (!verified) return alert("Please verify OTP first");
 
     try {
-      const { data: order } = await axios.post('https://e-commerce-1-6avq.onrender.com/create-order', { amount });
+      const { data: order } = await axiosInstance.post('/create-order', { amount });
 
       const options = {
         key: 'rzp_test_uVn1nCMdkKJ7qH',
@@ -78,7 +78,7 @@ const RazorpayPayment = () => {
           };
 
           try {
-            const res = await axios.post('https://e-commerce-1-6avq.onrender.com/verify-payment', verifyData);
+            const res = await axiosInstance.post('/verify-payment', verifyData);
             if (res.data.message === 'Payment successful') {
               alert('Payment Successful!');
               navigate('/');

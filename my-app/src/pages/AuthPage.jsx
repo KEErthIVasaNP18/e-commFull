@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
 import { loginUser, logoutUser } from '../redux/authSlice';
 import './AuthPage.css';
 
@@ -23,7 +23,7 @@ const AuthPage = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5500/sendOtp', { email });
+      const res = await axiosInstance.post('/sendOtp', { email });
       setOtpSent(true);
       setMessage(res.data.message || 'OTP Sent successfully!');
     } catch (err) {
@@ -40,7 +40,7 @@ const AuthPage = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5500/verifyOtp', { email, otp });
+      const res = await axiosInstance.post('/verifyOtp', { email, otp });
       setMessage(res.data.message);
       
       // On success, dispatch redux and navigate

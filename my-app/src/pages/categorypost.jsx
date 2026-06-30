@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { useParams } from "react-router-dom";
 import Post from "../components/post";
 
@@ -13,12 +13,12 @@ function CategoryPost() {
 
     useEffect(() => {
         const fetchCategory = async () => {
-            const response = await axios.get(`https://e-commerce-1-6avq.onrender.com/api/categories/${id}`);
+            const response = await axiosInstance.get(`/api/categories/${id}`);
             setCategory(response.data);
         };
 
         const fetchPost = async () => {
-            const response = await axios.get(`https://e-commerce-1-6avq.onrender.com/api/posts/category/${id}`);
+            const response = await axiosInstance.get(`/api/posts/category/${id}`);
             setPosts(response.data);
         };
 
