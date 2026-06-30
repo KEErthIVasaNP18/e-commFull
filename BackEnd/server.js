@@ -9,6 +9,7 @@ const categoryRoutes = require('./routes/category');
 const otpStore = require('./otpStore');
 const nodemailer = require('nodemailer')
 const dotenv = require("dotenv");
+const { connectDB } = require('./config/database');
 dotenv.config();
 
 const app = express();
@@ -18,9 +19,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB error:', err));
+connectDB();
 
 app.use('/api/posts', postRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -77,6 +76,9 @@ app.post('/sendOtp', async (req, res) => {
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false
     }
   });
 
