@@ -13,6 +13,7 @@ import CartPage from './pages/CartPage';
 import AuthPage from './pages/AuthPage'; // New styled AuthPage
 import WishlistPage from './pages/WishlistPage'; // New WishlistPage
 import RazorpayPayment from './RazorPayment';
+import Debug from './Debug';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -32,6 +33,7 @@ function App() {
         <BrowserRouter>
 
           <Nav search={search} setSearch={setSearch} />
+          <Debug />
 
           <Routes>
             <Route path='/' element={<ProductList search={search}/>} />
